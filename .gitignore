@@ -1,0 +1,9 @@
+/.idea
+/build
+/dist
+/venv
+/test_data
+*.so
+*.zo
+*.py[cd]
+.DS_store
