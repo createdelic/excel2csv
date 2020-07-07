@@ -1,0 +1,1 @@
+.\..\dist\excel2wc.exe -i .\greetings.xlsx -f 1 Yes No -c 3

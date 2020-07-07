@@ -66,10 +66,9 @@ def main():
 
     parser.add_argument('-i', action='store', dest='infile', help='the input file', required=True)
     parser.add_argument('-o', action='store', dest='outpath', help='the output base path', required=True)
-    parser.add_argument('-q', action='store', dest='quotechar', help='the quote character', required=False)
     parser.add_argument('-c', dest='columns', metavar='N', type=int, nargs='+', help='the columns to extract', required=True)
-    parser.add_argument("-r", dest='replacements', metavar='C', nargs=2, action='append', help='characters to replace', required=False)
-    parser.add_argument("-p", dest='configfile', help='config file', required=False)
+    parser.add_argument('-r', dest='replacements', metavar='C', nargs=2, action='append', help='characters to replace', required=False)
+    parser.add_argument('-p', dest='configfile', help='config file', required=False)
     parser.add_argument('-f', dest='column_filter', nargs=3, help='filter only rows containing a value', required=False)
 
     parser.add_argument("--unify-quotemarks",
@@ -83,6 +82,7 @@ def main():
                         action='store_true',
                         required=False)
 
+    parser.add_argument('--quotechar', action='store', dest='quotechar', help='the quote character', required=False)
     parser.add_argument('--delimiter', dest='delimiter', default=helpers.DEFAULT_DELIMITER, help='character to separate columns', required=False)
     parser.add_argument('--comment', dest='comment_start', default=helpers.DEFAULT_COMMENT_START, help='character to start a comment', required=False)
     parser.add_argument('--path-sep', dest='worksheet_path_sep', default=helpers.DEFAULT_WORKSHEET_NAME_PATH_SEP,

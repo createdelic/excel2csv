@@ -7,3 +7,4 @@
 *.zo
 *.py[cd]
 .DS_store
+/examples/out

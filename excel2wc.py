@@ -62,7 +62,6 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-i', action='store', dest='infile', help='the input file', required=True)
-    parser.add_argument('-q', action='store', dest='quotechar', help='the quote character', required=False)
     parser.add_argument('-c', dest='columns', metavar='N', type=int, nargs='+', help='the columns to count words in', required=True)
     parser.add_argument('-r', dest='replacements', metavar='C', nargs=2, action='append', help='characters to replace', required=False)
     parser.add_argument('-f', dest='column_filter', nargs=3, help='filter only rows containing a value', required=False)

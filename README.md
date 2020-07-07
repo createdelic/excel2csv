@@ -7,9 +7,9 @@ Created to help with game localization. The localizer can work with a giant, fri
 ## How to build
 
 ```
-pyinstaller -m PyInstaller --onefile excel2csv.py
-pyinstaller -m PyInstaller --onefile excel2singlecsv.py
-pyinstaller -m PyInstaller --onefile excel2wc.py
+python -m PyInstaller --onefile excel2csv.py
+python -m PyInstaller --onefile excel2singlecsv.py
+python -m PyInstaller --onefile excel2wc.py
 ```
 
 After building, check the `dist` folder for the EXE files.
@@ -21,3 +21,7 @@ After building, check the `dist` folder for the EXE files.
 `excel2singlecsv` - convert an Excel spreadsheet into a single CSV file
 
 `excel2wc` - count the number of words in an Excel spreadsheet
+
+## How to Use
+
+Run each command with `--help` or see the `examples` folder.

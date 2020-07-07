@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['excel2csv.py'],
-             pathex=['C:\\Users\\Max\\Projects\\excel2csv'],
+             pathex=['E:\\Dropbox (Personal)\\Code\\excel2csv'],
              binaries=[],
              datas=[],
              hiddenimports=[],
