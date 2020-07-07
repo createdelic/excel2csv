@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['excel2csv.py'],
+a = Analysis(['excel2singlecsv.py'],
              pathex=['C:\\Users\\Max\\Projects\\excel2csv'],
              binaries=[],
              datas=[],
@@ -23,7 +23,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='excel2csv',
+          name='excel2singlecsv',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
