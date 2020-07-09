@@ -27,5 +27,7 @@ def should_include_in_filter(worksheet, rownum, filter):
     if does_filter_key_match(filter_cell.value, filter[2]):
         return False
     if not does_filter_key_match(filter_cell.value, filter[1]):
-        raise Exception('Invalid filter value in sheet_name=' + worksheet.name + ' row=' + str(rownum))
+        raise Exception('Invalid filter value in sheet_name=' + worksheet.name
+                        + ' row=' + str(rownum)
+                        + ' value=' + filter_cell.value)
     return True

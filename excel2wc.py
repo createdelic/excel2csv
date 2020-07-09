@@ -28,7 +28,10 @@ def excel_to_wc(
         columns_to_count,
         replacements,
         comment_start,
-        column_filter):
+        column_filter,
+        ignore_if_columns_match,
+        ignore_if_column_empty,
+):
 
     total_word_count = 0
     workbook = xlrd.open_workbook(excel_file)
@@ -43,6 +46,24 @@ def excel_to_wc(
             first_cell = worksheet.cell(rownum, 0).value
             if isinstance(first_cell, str) and first_cell.startswith(comment_start):
                 continue
+
+            if ignore_if_column_empty and not worksheet.cell(rownum, ignore_if_column_empty).value:
+                continue
+
+            if ignore_if_columns_match:
+                should_ignore = False
+                first_match = True
+                match_contents = None
+                for column_to_match in ignore_if_columns_match:
+                    cell_contents = helpers.process_cell(
+                        worksheet.cell(rownum, column_to_match).value, replacements, True)
+                    if (not first_match) and (cell_contents == match_contents):
+                        should_ignore = True
+                        break
+                    first_match = False
+                    match_contents = cell_contents
+                if should_ignore:
+                    continue
 
             if not helpers.should_include_in_filter(worksheet, rownum, column_filter):
                 continue
@@ -65,6 +86,14 @@ def main():
     parser.add_argument('-c', dest='columns', metavar='N', type=int, nargs='+', help='the columns to count words in', required=True)
     parser.add_argument('-r', dest='replacements', metavar='C', nargs=2, action='append', help='characters to replace', required=False)
     parser.add_argument('-f', dest='column_filter', nargs=3, help='filter only rows containing a value', required=False)
+    parser.add_argument('--ignore-if-columns-match',
+                        dest='ignore_if_columns_match',
+                        metavar='N',
+                        type=int,
+                        nargs='+',
+                        help='ignore if columns match',
+                        required=False)
+    parser.add_argument('--ignore-if-column-empty', type=int, dest='ignore_if_column_empty', help='ignore if column matches', required=False)
 
     parser.add_argument('--comment', dest='comment_start', default=helpers.DEFAULT_COMMENT_START, help='character to start a comment', required=False)
 
@@ -80,6 +109,8 @@ def main():
         replacements=replacements,
         comment_start=args.comment_start,
         column_filter=args.column_filter,
+        ignore_if_columns_match=args.ignore_if_columns_match,
+        ignore_if_column_empty=args.ignore_if_column_empty,
     )
 
 
