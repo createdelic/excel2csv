@@ -43,8 +43,7 @@ def excel_to_wc(
             if worksheet.row_len(rownum) == 0:
                 continue
 
-            first_cell = worksheet.cell(rownum, 0).value
-            if isinstance(first_cell, str) and first_cell.startswith(comment_start):
+            if helpers.is_comment_row(worksheet, rownum, comment_start):
                 continue
 
             if ignore_if_column_empty and not worksheet.cell(rownum, ignore_if_column_empty).value:

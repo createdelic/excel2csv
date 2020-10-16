@@ -20,14 +20,19 @@ def does_filter_key_match(a, b):
     return a == b
 
 
-def should_include_in_filter(worksheet, rownum, filter):
-    if not filter:
+def should_include_in_filter(worksheet, rownum, column_filter):
+    if not column_filter:
         return True
-    filter_cell = worksheet.cell(rownum, int(filter[0]))
-    if does_filter_key_match(filter_cell.value, filter[2]):
+    filter_cell = worksheet.cell(rownum, int(column_filter[0]))
+    if does_filter_key_match(filter_cell.value, column_filter[2]):
         return False
-    if not does_filter_key_match(filter_cell.value, filter[1]):
+    if not does_filter_key_match(filter_cell.value, column_filter[1]):
         raise Exception('Invalid filter value in sheet_name=' + worksheet.name
                         + ' row=' + str(rownum)
                         + ' value=' + filter_cell.value)
     return True
+
+
+def is_comment_row(worksheet, rownum, comment_start):
+    first_cell = worksheet.cell(rownum, 0).value
+    return isinstance(first_cell, str) and first_cell.startswith(comment_start)
