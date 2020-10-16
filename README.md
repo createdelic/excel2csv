@@ -7,9 +7,9 @@ Created to help with game localization. The localizer can work with a giant, fri
 ## How to build
 
 ```
-python -m PyInstaller --onefile excel2csv.py
-python -m PyInstaller --onefile excel2singlecsv.py
-python -m PyInstaller --onefile excel2wc.py
+python -m PyInstaller excel2csv.py
+python -m PyInstaller excel2singlecsv.py
+python -m PyInstaller excel2wc.py
 ```
 
 After building, check the `dist` folder for the EXE files.
