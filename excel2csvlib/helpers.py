@@ -24,9 +24,10 @@ def should_include_in_filter(worksheet, rownum, column_filter):
     if not column_filter:
         return True
     filter_cell = worksheet.cell(rownum, int(column_filter[0]))
-    if does_filter_key_match(filter_cell.value, column_filter[2]):
+    filter_cell_value = str(filter_cell.value)
+    if (not filter_cell_value) or (not filter_cell_value.strip()) or does_filter_key_match(filter_cell_value, column_filter[2]):
         return False
-    if not does_filter_key_match(filter_cell.value, column_filter[1]):
+    if not does_filter_key_match(filter_cell_value, column_filter[1]):
         raise Exception('Invalid filter value in sheet_name=' + worksheet.name
                         + ' row=' + str(rownum)
                         + ' value=' + filter_cell.value)
