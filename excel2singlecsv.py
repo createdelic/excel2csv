@@ -2,7 +2,7 @@ import excel2csvlib.helpers as helpers
 
 import csv
 
-import xlrd
+import openpyxl
 import argparse
 
 
@@ -15,9 +15,10 @@ def excel_to_csv(
         comment_start,
         should_trim,
         quotechar,
-        column_filter):
+        column_filter,
+        ignore_if_column_empty):
 
-    workbook = xlrd.open_workbook(excel_file)
+    workbook = openpyxl.load_workbook(excel_file, read_only=True)
     with open(out_csv_file, 'w', newline='', encoding='utf-8') as csvfile:
         writetocsv = csv.writer(
             csvfile,
@@ -25,22 +26,25 @@ def excel_to_csv(
             quoting=csv.QUOTE_ALL,
             quotechar=quotechar)
 
-        for sheet_name in workbook.sheet_names():
+        for sheet_name in workbook.sheetnames:
             print('Reading sheet \"' + sheet_name + '\"')
-            worksheet = workbook.sheet_by_name(sheet_name)
+            worksheet = workbook[sheet_name]
 
-            for rownum in range(worksheet.nrows):
-                if worksheet.row_len(rownum) == 0:
+            for row in worksheet:
+                if helpers.is_row_empty(row, columns_to_copy):
                     continue
 
-                if helpers.is_comment_row(worksheet, rownum, comment_start):
+                if helpers.is_row_ignored(row, comment_start):
                     continue
 
-                if not helpers.should_include_in_filter(worksheet, rownum, column_filter):
+                if ignore_if_column_empty and helpers.is_cell_empty(row[ignore_if_column_empty]):
                     continue
 
-                data = [helpers.process_cell(worksheet.cell(rownum, x).value, replacements, should_trim) for x in
-                     columns_to_copy]
+                if not helpers.should_include_in_filter(row, column_filter):
+                    continue
+
+                data = [helpers.process_cell(row[x], replacements, should_trim) for x in
+                        columns_to_copy]
                 data.insert(0, sheet_name)
 
                 writetocsv.writerow(data)
@@ -70,6 +74,8 @@ def main():
 
     parser.add_argument('--quotechar', action='store', dest='quotechar', help='the quote character', required=False)
     parser.add_argument('--delimiter', dest='delimiter', default=helpers.DEFAULT_DELIMITER, help='character to separate columns', required=False)
+    parser.add_argument('--ignore-if-column-empty', type=int, dest='ignore_if_column_empty',
+                        help='ignore if column is empty', required=False)
     parser.add_argument('--comment', dest='comment_start', default=helpers.DEFAULT_COMMENT_START, help='character to start a comment', required=False)
 
     parser.add_argument('--version', action='version', version='%(prog)s ' + helpers.PROGRAM_VERSION)
@@ -96,6 +102,7 @@ def main():
         should_trim=args.trim,
         quotechar=args.quotechar,
         column_filter=args.column_filter,
+        ignore_if_column_empty=args.ignore_if_column_empty,
     )
 
 

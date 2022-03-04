@@ -3,7 +3,7 @@ import excel2csvlib.helpers as helpers
 import csv
 import json
 
-import xlrd
+import openpyxl
 import os
 import pathlib
 import argparse
@@ -20,12 +20,13 @@ def excel_to_csv(
         should_trim,
         quotechar,
         output_paths,
-        column_filter):
+        column_filter,
+        ignore_if_column_empty):
 
-    workbook = xlrd.open_workbook(excel_file)
-    for sheet_name in workbook.sheet_names():
+    workbook = openpyxl.load_workbook(excel_file, read_only=True)
+    for sheet_name in workbook.sheetnames:
         print('Reading sheet \"' + sheet_name + '\"')
-        worksheet = workbook.sheet_by_name(sheet_name)
+        worksheet = workbook[sheet_name]
 
         if output_paths:
             csv_file_relative_path = output_paths[sheet_name]
@@ -43,18 +44,21 @@ def excel_to_csv(
                 delimiter=delimiter,
                 quoting=csv.QUOTE_ALL,
                 quotechar=quotechar)
-            for rownum in range(worksheet.nrows):
-                if worksheet.row_len(rownum) == 0:
+            for row in worksheet:
+                if helpers.is_row_empty(row, columns_to_copy):
                     continue
 
-                if helpers.is_comment_row(worksheet, rownum, comment_start):
+                if helpers.is_row_ignored(row, comment_start):
                     continue
 
-                if not helpers.should_include_in_filter(worksheet, rownum, column_filter):
+                if ignore_if_column_empty and helpers.is_cell_empty(row[ignore_if_column_empty]):
+                    continue
+
+                if not helpers.should_include_in_filter(row, column_filter):
                     continue
 
                 writetocsv.writerow(
-                    [helpers.process_cell(worksheet.cell(rownum, x).value, replacements, should_trim) for x in columns_to_copy]
+                    [helpers.process_cell(row[x], replacements, should_trim) for x in columns_to_copy]
                 )
 
             print('Saved sheet \"' + sheet_name + '\" to ' + csv_file_full_path)
@@ -83,6 +87,8 @@ def main():
 
     parser.add_argument('--quotechar', action='store', dest='quotechar', help='the quote character', required=False)
     parser.add_argument('--delimiter', dest='delimiter', default=helpers.DEFAULT_DELIMITER, help='character to separate columns', required=False)
+    parser.add_argument('--ignore-if-column-empty', type=int, dest='ignore_if_column_empty',
+                        help='ignore if column is empty', required=False)
     parser.add_argument('--comment', dest='comment_start', default=helpers.DEFAULT_COMMENT_START, help='character to start a comment', required=False)
     parser.add_argument('--path-sep', dest='worksheet_path_sep', default=helpers.DEFAULT_WORKSHEET_NAME_PATH_SEP,
                         help='character to indicate a path separator in a worksheet name', required=False)
@@ -118,6 +124,7 @@ def main():
         quotechar=args.quotechar,
         output_paths=output_paths,
         column_filter=args.column_filter,
+        ignore_if_column_empty=args.ignore_if_column_empty,
     )
 
 

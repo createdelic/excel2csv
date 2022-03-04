@@ -1,6 +1,6 @@
 import excel2csvlib.helpers as helpers
 
-import xlrd
+import openpyxl
 import argparse
 import string
 
@@ -34,19 +34,19 @@ def excel_to_wc(
 ):
 
     total_word_count = 0
-    workbook = xlrd.open_workbook(excel_file)
-    for sheet_name in workbook.sheet_names():
-        worksheet = workbook.sheet_by_name(sheet_name)
+    workbook = openpyxl.load_workbook(excel_file, read_only=True)
+    for sheet_name in workbook.sheetnames:
+        worksheet = workbook[sheet_name]
         sheet_word_count = 0
 
-        for rownum in range(worksheet.nrows):
-            if worksheet.row_len(rownum) == 0:
+        for row in worksheet:
+            if helpers.is_row_empty(row, columns_to_count):
                 continue
 
-            if helpers.is_comment_row(worksheet, rownum, comment_start):
+            if helpers.is_row_ignored(row, comment_start):
                 continue
 
-            if ignore_if_column_empty and not worksheet.cell(rownum, ignore_if_column_empty).value:
+            if ignore_if_column_empty and helpers.is_cell_empty(row[ignore_if_column_empty]):
                 continue
 
             if ignore_if_columns_match:
@@ -54,8 +54,7 @@ def excel_to_wc(
                 first_match = True
                 match_contents = None
                 for column_to_match in ignore_if_columns_match:
-                    cell_contents = helpers.process_cell(
-                        worksheet.cell(rownum, column_to_match).value, replacements, True)
+                    cell_contents = helpers.process_cell(row[column_to_match], replacements, True)
                     if (not first_match) and (cell_contents == match_contents):
                         should_ignore = True
                         break
@@ -64,11 +63,11 @@ def excel_to_wc(
                 if should_ignore:
                     continue
 
-            if not helpers.should_include_in_filter(worksheet, rownum, column_filter):
+            if not helpers.should_include_in_filter(row, column_filter):
                 continue
 
             for column_to_count in columns_to_count:
-                cell_contents = helpers.process_cell(worksheet.cell(rownum, column_to_count).value, replacements, True)
+                cell_contents = helpers.process_cell(row[column_to_count], replacements, True)
                 sheet_word_count += len(get_words(cell_contents))
 
         print(sheet_name + '\t' + str(sheet_word_count))
