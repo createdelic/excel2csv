@@ -1,7 +1,7 @@
 import openpyxl.cell.cell
 from openpyxl.cell.read_only import EmptyCell
 
-PROGRAM_VERSION = '1.0'
+PROGRAM_VERSION = '2023.8.8'
 
 DEFAULT_COMMENT_START = '#'
 DEFAULT_DELIMITER = '|'

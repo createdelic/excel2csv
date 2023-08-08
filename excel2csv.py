@@ -71,6 +71,7 @@ def main():
     parser.add_argument('-o', action='store', dest='outpath', help='the output base path', required=True)
     parser.add_argument('-c', dest='columns', metavar='N', type=int, nargs='+', help='the columns to extract', required=True)
     parser.add_argument('-r', dest='replacements', metavar='C', nargs=2, action='append', help='characters to replace', required=False)
+    parser.add_argument('--replace-newline', dest='replace_newline', type=str, help='replace newlines with this', required=False)
     parser.add_argument('-p', dest='configfile', help='config file', required=False)
     parser.add_argument('-f', dest='column_filter', nargs=3, help='filter only rows containing a value', required=False)
 
@@ -106,6 +107,9 @@ def main():
         replacements['”'] = '"'
         replacements['‘'] = "'"
         replacements['’'] = "'"
+
+    if args.replace_newline:
+        replacements['\n'] = args.replace_newline
 
     output_paths = None
     if args.configfile:
