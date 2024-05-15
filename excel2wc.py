@@ -22,7 +22,6 @@ def get_words(s):
     s = list(filter(None, s.split(' ')))
     return s
 
-
 def excel_to_wc(
         excel_file,
         columns_to_count,
@@ -31,10 +30,11 @@ def excel_to_wc(
         column_filter,
         ignore_if_columns_match,
         ignore_if_column_empty,
+        ignore_if_column_not_empty,
 ):
 
     total_word_count = 0
-    workbook = openpyxl.load_workbook(excel_file, read_only=True)
+    workbook = openpyxl.load_workbook(excel_file, data_only=True)
     for sheet_name in workbook.sheetnames:
         worksheet = workbook[sheet_name]
         sheet_word_count = 0
@@ -47,6 +47,9 @@ def excel_to_wc(
                 continue
 
             if ignore_if_column_empty and helpers.is_cell_empty(row[ignore_if_column_empty]):
+                continue
+
+            if ignore_if_column_not_empty and helpers.is_cell_not_empty(row[ignore_if_column_not_empty]):
                 continue
 
             if ignore_if_columns_match:
@@ -91,7 +94,8 @@ def main():
                         nargs='+',
                         help='ignore if columns match',
                         required=False)
-    parser.add_argument('--ignore-if-column-empty', type=int, dest='ignore_if_column_empty', help='ignore if column matches', required=False)
+    parser.add_argument('--ignore-if-column-empty', type=int, dest='ignore_if_column_empty', help='ignore if column is empty', required=False)
+    parser.add_argument('--ignore-if-column-not-empty', type=int, dest='ignore_if_column_not_empty', help='ignore if column is not empty', required=False)
 
     parser.add_argument('--comment', dest='comment_start', default=helpers.DEFAULT_COMMENT_START, help='character to start a comment', required=False)
 
@@ -109,6 +113,7 @@ def main():
         column_filter=args.column_filter,
         ignore_if_columns_match=args.ignore_if_columns_match,
         ignore_if_column_empty=args.ignore_if_column_empty,
+        ignore_if_column_not_empty=args.ignore_if_column_not_empty,
     )
 
 

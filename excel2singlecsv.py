@@ -18,7 +18,7 @@ def excel_to_csv(
         column_filter,
         ignore_if_column_empty):
 
-    workbook = openpyxl.load_workbook(excel_file, read_only=True)
+    workbook = openpyxl.load_workbook(excel_file, data_only=True)
     with open(out_csv_file, 'w', newline='', encoding='utf-8') as csvfile:
         writetocsv = csv.writer(
             csvfile,

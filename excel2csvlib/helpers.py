@@ -21,8 +21,14 @@ def is_row_empty(row, column_indexes):
 
 def is_cell_empty(cell):
     return isinstance(cell, EmptyCell) \
-           or (not cell.value) \
+           or (cell.value is None) \
            or (cell.data_type == 's' and (not cell.value.strip()))
+
+
+def is_cell_not_empty(cell):
+    return (not isinstance(cell, EmptyCell)) \
+           and (cell.value is not None) \
+           and (cell.data_type == 's' and cell.value.strip())
 
 
 def is_row_ignored(row, comment_start):

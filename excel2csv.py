@@ -23,7 +23,7 @@ def excel_to_csv(
         column_filter,
         ignore_if_column_empty):
 
-    workbook = openpyxl.load_workbook(excel_file, read_only=True)
+    workbook = openpyxl.load_workbook(excel_file, data_only=True)
     for sheet_name in workbook.sheetnames:
         print('Reading sheet \"' + sheet_name + '\"')
         worksheet = workbook[sheet_name]
